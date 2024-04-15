@@ -101,7 +101,8 @@ opt = parser.parse_args()
 
 ### Load network ###
 net = TriSegNet().half()
-net.load_state_dict(torch.load('params.pth', map_location=lambda s, l: s))
+# net.load_state_dict(torch.load('params_3DM.pth', map_location=lambda s, l: s))
+net.load_state_dict(torch.load('params_DaVinci.pth', map_location=lambda s, l: s))
 
 ### Defined Pre-process ##
 preprocess = compose([lambda x: x.astype('float32'), resize])
@@ -124,7 +125,7 @@ for ldr_file in opt.ldr:
 
     if opt.out_format == 'tif':
         out_name = create_name(ldr_file, 'HDR', 'tif', opt.out, opt.tag)
-        prediction = np.round(prediction * 65535.0).astype(np.uint16)
+        prediction = np.round(np.clip(prediction,0,1) * 65535.0).astype(np.uint16)
         io.imwrite(out_name, prediction)
         # cv2.imwrite(out_name, prediction, (int(cv2.IMWRITE_TIFF_COMPRESSION), 5))
         # flag 5 means LZW compression, see: opencv\sources\3rdparty\libtiff\tiff.h
@@ -132,7 +133,7 @@ for ldr_file in opt.ldr:
         raise AttributeError('Unsupported output format, you can install additional package openEXR.')
     elif opt.out_format == 'png':
         out_name = create_name(ldr_file, 'HDR', 'png', opt.out, opt.tag)
-        prediction = np.round(prediction * 65535.0).astype(np.uint16)
+        prediction = np.round(np.clip(prediction, 0, 1) * 65535.0).astype(np.uint16)
         io.imwrite(out_name, prediction)
         # cv2.imwrite(out_name, prediction)
     else:

@@ -1,0 +1,1 @@
+python infer_sdr2hdr_video.py --file_name /mnt/ec-data2/ivs/1080p/yongpeng/deepHDR/zhijian_feedback/烈焰-算法问题-20240401/sdr/LY-EP17-夜外红色溢色-SDR.mov --save_name /mnt/ec-data2/ivs/1080p/yongpeng/deepHDR/zhijian_feedback/烈焰-算法问题-20240401/hdrtvdm

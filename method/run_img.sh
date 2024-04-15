@@ -1,0 +1,1 @@
+python3 test.py /mnt/ec-data2/ivs/1080p/zyh/hdr_dirty_face/png/select/SDR0357_709-0027.png
