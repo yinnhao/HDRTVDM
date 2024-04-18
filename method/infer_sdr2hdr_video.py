@@ -4,7 +4,7 @@ import cupy as cp
 from torch.utils.dlpack import to_dlpack,from_dlpack
 from cupy import fromDlpack
 import torch
-import data.util as util
+# import data.util as util
 import numpy as np
 from network import TriSegNet
 import argparse
@@ -27,7 +27,8 @@ class S2H_video_infer(video_infer):
         img_LQ = img_LQ.half()
         # cond = cond.cuda()
         # data = {'LQ': img_LQ, 'cond':cond}
-        output = self.model(img_LQ)
+        with torch.no_grad():
+            output = self.model(img_LQ)
         
         output = output.float().squeeze()
         # self.model.feed_data(data, need_GT=False)
@@ -52,15 +53,15 @@ if __name__ == '__main__':
     # engine_path = "/data/yh/SR2023/KAIR/weight/swinir_v2_x2_1088x1920_fp16_op17.engine"
     # encode_params = ("libx264", "x264opts", "qp=12:bframes=3")
     import os.path as osp
-    import logging
-    import time
+    # import logging
+    # import time
     import argparse
-    from collections import OrderedDict
+    # from collections import OrderedDict
 
-    import options.options as option
+    # import options.options as option
     # import utils.util as util
     # from data import create_dataset, create_dataloader
-    from models import create_model
+    # from models import create_model
 
     import numpy as np
 
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     # 添加命令行参数
     parser.add_argument('--file_name', type=str, help='Input file name')
     parser.add_argument('--save_name', type=str, help='Output file name')
+    parser.add_argument('--model_path', type=str, help='Model path')
     # parser.add_argument('--engine_path', type=str, help='Engine path')
     # parser.add_argument('-opt', type=str, required=True, help='Path to options YMAL file.')
     # opt = option.parse(parser.parse_args().opt, is_train=False)
@@ -86,14 +88,15 @@ if __name__ == '__main__':
     # 使用命令行参数
     file_name = args.file_name
     save_name = args.save_name
+    model_path = args.model_path
     # engine_path = args.engine_path
     # encode_params = ("libx264", "x264opts", "qp=12:bframes=3")
     # encode_params = ("libx265", "x265-params", "qp=12:bframes=3")
     
     ### Load network ###
-    model = TriSegNet().half()
+    model = TriSegNet().cuda().half()
     # net.load_state_dict(torch.load('params_3DM.pth', map_location=lambda s, l: s))
-    model.load_state_dict(torch.load('params_DaVinci.pth', map_location=lambda s, l: s))
+    model.load_state_dict(torch.load(model_path, map_location=lambda s, l: s))
     
     encode_params = encode_params = ("libx265", "x265-params", "colorprim='bt2020':transfer='smpte2084':colormatrix='bt2020nc':qp=12:bframes=3")
 
